@@ -1,4 +1,5 @@
-
+from numpy import pi, polymul
+from scipy.signal import bilinear
 
 def A_weighting(fs):
     """Design of an A-weighting filter.

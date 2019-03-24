@@ -1,10 +1,20 @@
 import numpy as np
-from scipy.signal import butter, sosfiltfilt, sosfreqz
+from scipy.signal import butter, sosfiltfilt, sosfreqz, filtfilt, tf2zpk
 from scipy.io.wavfile import read, write
 import matplotlib.pyplot as plt
 
 from . import by3OctBand
+from .weighting import A_weighting
 
+def get_APower(file):
+    fs, data = read(file)
+    data = data.astype("float32")
+    b, a = A_weighting(fs)
+    z, p, k = tf2zpk(b, a)
+    IRLen = getIRLen(p)
+    filtData = filtfilt(b, a, data, padlen=IRLen)
+    power = (filtData*filtData).sum()
+    return power
 
 def ene2dB(eneList, cali=1.0):
     ene = np.array(eneList)
